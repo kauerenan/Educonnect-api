@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from APP.models.aluno_model import Aluno
 from APP.db.database import db
-from datetime import datetime, date
+from datetime import datetime
 
 alunos_routes = Blueprint("alunos_routes", __name__)
 
@@ -40,10 +40,11 @@ def listar_alunos():
         {
             "id": aluno.id,
             "nome": aluno.nome,
-            "idade": aluno.idade,           # ← via @property no model
+            "idade": aluno.idade,
             "turma_id": aluno.turma_id
         } for aluno in alunos
     ])
+
 
 @alunos_routes.route("/alunos", methods=["POST"])
 def criar_aluno():
@@ -82,9 +83,12 @@ def criar_aluno():
               mensagem: Aluno criado com sucesso!
       400:
         description: Dados inválidos
+        content:
+          application/json:
+            example:
+              erro: Dados incompletos
     """
     data = request.get_json()
-
     if not data or not all(k in data for k in ("nome", "data_nascimento", "turma_id")):
         return jsonify({"erro": "Dados incompletos"}), 400
 
@@ -101,6 +105,7 @@ def criar_aluno():
     db.session.add(novo_aluno)
     db.session.commit()
     return jsonify({"mensagem": "Aluno criado com sucesso!"}), 201
+
 
 @alunos_routes.route("/alunos/<int:id>", methods=["PUT"])
 def atualizar_aluno(id):
@@ -138,6 +143,10 @@ def atualizar_aluno(id):
               mensagem: Aluno atualizado com sucesso!
       404:
         description: Aluno não encontrado
+        content:
+          application/json:
+            example:
+              erro: Aluno não encontrado
     """
     aluno = Aluno.query.get(id)
     if not aluno:
@@ -155,6 +164,7 @@ def atualizar_aluno(id):
 
     db.session.commit()
     return jsonify({"mensagem": "Aluno atualizado com sucesso!"})
+
 
 @alunos_routes.route("/alunos/<int:id>", methods=["DELETE"])
 def deletar_aluno(id):
@@ -178,6 +188,10 @@ def deletar_aluno(id):
               mensagem: Aluno deletado com sucesso!
       404:
         description: Aluno não encontrado
+        content:
+          application/json:
+            example:
+              erro: Aluno não encontrado
     """
     aluno = Aluno.query.get(id)
     if not aluno:
