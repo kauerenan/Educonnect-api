@@ -1,88 +1,108 @@
-ℹ️ Acesse a documentação interativa da API em: http://localhost:5000/apidocs
-
 # 🎓 EduConnect API
 
-Este é o backend do **sistema de gestão escolar EduConnect**, desenvolvido para uma escola infantil. A API RESTful foi construída com **Python e Flask**, fornecendo operações CRUD completas para as entidades **Alunos**, **Professores** e **Turmas**, com integração a um banco de dados relacional e documentação automática via Swagger.
+**EduConnect** é uma API RESTful para gestão escolar, desenvolvida para uma escola infantil, permitindo o controle de **alunos**, **turmas** e **professores**. O projeto é modularizado com Flask e SQLAlchemy, containerizado com Docker e documentado via Swagger (Flasgger).
+
+ℹ️ Documentação interativa disponível em: http://localhost:5000/apidocs
 
 ---
 
-## 🔧 Tecnologias Utilizadas
+## 🚀 Tecnologias Utilizadas
 
-- Python 3.x
-- Flask
-- SQLAlchemy
-- Flasgger (Swagger/OpenAPI)
-- Docker
-
----
-
-## 📁 Estrutura do Projeto
-
-educonnect/ ├── APP/ │   ├── db/ │   ├── models/ │   ├── routes/ │   └── init.py ├── app.py ├── Dockerfile ├── requirements.txt └── README.md
+- Python 3.11+
+- Flask + Blueprints
+- SQLAlchemy (ORM)
+- Flasgger (Swagger UI)
+- PostgreSQL (via Docker)
+- Docker + Docker Compose
 
 ---
 
-## 🧠 Arquitetura do Backend
+## 🧱 Estrutura de Pastas
 
-- **Modularização com Blueprints**: cada entidade possui suas rotas em arquivos separados.
-- **ORM com SQLAlchemy**: mapeamento das tabelas do banco de dados.
-- **Inicialização Centralizada**: tudo começa por `app.py`.
-- **Swagger UI**: acessível para visualização e testes da API RESTful.
+EduConnect-api/
+├── backend/
+│   ├── APP/
+│   │   ├── db/                # Conexão com o banco
+│   │   ├── models/            # Modelos ORM
+│   │   ├── routes/            # Rotas por entidade
+│   │   └── __init__.py
+│   ├── app.py                 # Ponto de entrada Flask
+│   ├── schema.sql             # Script de criação do banco
+│   └── requirements.txt
+├── db/                        # Volume do banco de dados
+├── docker-compose.yml
+└── start_backend.ps1
 
 ---
 
-## 🐳 Executando com Docker
+## 🐳 Como Rodar com Docker
 
-### 1. Build da Imagem
+### 1. Subir a aplicação
 
-```bash
-docker build -t educonnect-api .
+docker compose up --build
 
-
-2. Executar o Container
-docker run -d -p 5000:5000 educonnect-api
+Ou, para rodar em segundo plano:
 
+docker compose up -d
 
-Documentação Swagger: http://localhost:5000/apidocs
+Swagger: http://localhost:5000/apidocs
 
-📬 Exemplos de Requisições
+---
+
+## ✅ Atalho via PowerShell
+
+Se preferir, execute:
+
+& "backend/start_backend.ps1"
+
+Este script:
+
+- Derruba containers antigos
+- Reconstrói imagens
+- Aguarda backend subir
+- Abre o navegador com o Swagger
+
+---
+
+## 🔄 Exemplos de Requisições (JSON)
+
 ➕ Criar Aluno
-POST /alunos
-Content-Type: application/json
 
+POST /alunos
 {
   "nome": "Maria Clara",
-  "idade": 5,
-  "id_turma": 1
+  "data_nascimento": "2017-10-05",
+  "turma_id": 1
 }
 
+📚 Listar Professores
 
-📚 Obter Todos os Professores
 GET /professores
 
-
 ✏️ Atualizar Turma
-PUT /turmas/2
-Content-Type: application/json
 
+PUT /turmas/2
 {
-  "nome": "Turma Girassol"
+  "nome": "Turma Girassol",
+  "ano": "2025",
+  "turno": "Tarde"
 }
 
+❌ Deletar Aluno
 
-❌ Remover Aluno
 DELETE /alunos/4
 
+---
 
+## 📖 Documentação Swagger
 
-📖 Acesso à Documentação
 Após rodar a aplicação, acesse:
-👉 http://localhost:5000/apidocs para a interface interativa do Swagger (OpenAPI 3.0)
+👉 http://localhost:5000/apidocs
 
-👨‍💻 Autor
-Desenvolvido por Kauê Renan Ferreora Barros
-RA 6323069
-Disciplina: Integração de Software
+---
 
+## 👨‍💻 Autor
 
-
+Desenvolvido por Kauê Renan Ferreira Barros  
+RA: 6323069  
+Disciplina: Integração de Software e Implementação de Software
