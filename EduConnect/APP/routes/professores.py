@@ -14,14 +14,35 @@ def listar_professores():
     responses:
       200:
         description: Lista de professores cadastrados
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  nome:
+                    type: string
+                    example: Ana Paula
+                  especialidade:
+                    type: string
+                    example: Matemática
+                  email:
+                    type: string
+                    example: ana.paula@escola.com
     """
     professores = Professor.query.all()
-    return jsonify([{
-        "id": p.id,
-        "nome": p.nome,
-        "especialidade": p.especialidade,
-        "email": p.email
-    } for p in professores])
+    return jsonify([
+        {
+            "id": p.id,
+            "nome": p.nome,
+            "especialidade": p.especialidade,
+            "email": p.email
+        } for p in professores
+    ])
 
 @professores_routes.route("/professores", methods=["POST"])
 def criar_professor():
@@ -31,23 +52,38 @@ def criar_professor():
     tags:
       - Professores
     parameters:
-      - in: body
-        name: body
+      - name: corpo
+        in: body
         required: true
         schema:
           type: object
+          required:
+            - nome
+            - especialidade
+            - email
           properties:
             nome:
               type: string
+              example: Juliana Alves
             especialidade:
               type: string
+              example: Artes
             email:
               type: string
+              example: juliana.alves@escola.com
     responses:
       201:
         description: Professor criado com sucesso
+        content:
+          application/json:
+            example:
+              mensagem: Professor criado com sucesso!
       400:
         description: Dados inválidos
+        content:
+          application/json:
+            example:
+              erro: Dados incompletos
     """
     data = request.get_json()
     if not data or not all(k in data for k in ("nome", "especialidade", "email")):
@@ -65,27 +101,39 @@ def atualizar_professor(id):
     tags:
       - Professores
     parameters:
-      - in: path
-        name: id
+      - name: id
+        in: path
         required: true
-        type: integer
-      - in: body
-        name: body
+        schema:
+          type: integer
+      - name: corpo
+        in: body
         required: true
         schema:
           type: object
           properties:
             nome:
               type: string
+              example: Maria Eduarda
             especialidade:
               type: string
+              example: Física
             email:
               type: string
+              example: maria.eduarda@escola.com
     responses:
       200:
         description: Professor atualizado com sucesso
+        content:
+          application/json:
+            example:
+              mensagem: Professor atualizado com sucesso
       404:
         description: Professor não encontrado
+        content:
+          application/json:
+            example:
+              erro: Professor não encontrado
     """
     prof = Professor.query.get(id)
     if not prof:
@@ -105,15 +153,24 @@ def deletar_professor(id):
     tags:
       - Professores
     parameters:
-      - in: path
-        name: id
+      - name: id
+        in: path
         required: true
-        type: integer
+        schema:
+          type: integer
     responses:
       200:
         description: Professor deletado com sucesso
+        content:
+          application/json:
+            example:
+              mensagem: Professor deletado com sucesso
       404:
         description: Professor não encontrado
+        content:
+          application/json:
+            example:
+              erro: Professor não encontrado
     """
     prof = Professor.query.get(id)
     if not prof:

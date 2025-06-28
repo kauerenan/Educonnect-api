@@ -1,5 +1,4 @@
 from flask import Blueprint, jsonify, request
-from flasgger.utils import swag_from
 from APP.models.aluno_model import Aluno
 from APP.db.database import db
 
@@ -75,6 +74,10 @@ def criar_aluno():
     responses:
       201:
         description: Aluno criado com sucesso
+        content:
+          application/json:
+            example:
+              mensagem: Aluno criado com sucesso!
       400:
         description: Dados inválidos
     """
@@ -91,3 +94,82 @@ def criar_aluno():
     db.session.add(novo_aluno)
     db.session.commit()
     return jsonify({"mensagem": "Aluno criado com sucesso!"}), 201
+
+@alunos_routes.route("/alunos/<int:id>", methods=["PUT"])
+def atualizar_aluno(id):
+    """
+    Atualiza os dados de um aluno existente
+    ---
+    tags:
+      - Alunos
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              nome:
+                type: string
+              idade:
+                type: integer
+              turma:
+                type: string
+    responses:
+      200:
+        description: Aluno atualizado com sucesso
+        content:
+          application/json:
+            example:
+              mensagem: Aluno atualizado com sucesso!
+      404:
+        description: Aluno não encontrado
+    """
+    aluno = Aluno.query.get(id)
+    if not aluno:
+        return jsonify({"erro": "Aluno não encontrado"}), 404
+
+    data = request.get_json()
+    aluno.nome = data.get("nome", aluno.nome)
+    aluno.idade = data.get("idade", aluno.idade)
+    aluno.turma = data.get("turma", aluno.turma)
+
+    db.session.commit()
+    return jsonify({"mensagem": "Aluno atualizado com sucesso!"})
+
+@alunos_routes.route("/alunos/<int:id>", methods=["DELETE"])
+def deletar_aluno(id):
+    """
+    Deleta um aluno pelo ID
+    ---
+    tags:
+      - Alunos
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    responses:
+      200:
+        description: Aluno deletado com sucesso
+        content:
+          application/json:
+            example:
+              mensagem: Aluno deletado com sucesso!
+      404:
+        description: Aluno não encontrado
+    """
+    aluno = Aluno.query.get(id)
+    if not aluno:
+        return jsonify({"erro": "Aluno não encontrado"}), 404
+
+    db.session.delete(aluno)
+    db.session.commit()
+    return jsonify({"mensagem": "Aluno deletado com sucesso!"})
