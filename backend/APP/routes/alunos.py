@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from APP.models.aluno_model import Aluno
 from APP.db.database import db
+from datetime import datetime, date
 
 alunos_routes = Blueprint("alunos_routes", __name__)
 
@@ -29,18 +30,18 @@ def listar_alunos():
                     example: João da Silva
                   idade:
                     type: integer
-                    example: 10
-                  turma:
-                    type: string
-                    example: 5A
+                    example: 13
+                  turma_id:
+                    type: integer
+                    example: 1
     """
     alunos = Aluno.query.all()
     return jsonify([
         {
             "id": aluno.id,
             "nome": aluno.nome,
-            "idade": aluno.idade,
-            "turma": aluno.turma
+            "idade": aluno.idade,           # ← via @property no model
+            "turma_id": aluno.turma_id
         } for aluno in alunos
     ])
 
@@ -59,18 +60,19 @@ def criar_aluno():
             type: object
             required:
               - nome
-              - idade
-              - turma
+              - data_nascimento
+              - turma_id
             properties:
               nome:
                 type: string
                 example: Maria
-              idade:
-                type: integer
-                example: 11
-              turma:
+              data_nascimento:
                 type: string
-                example: 6B
+                format: date
+                example: 2011-05-20
+              turma_id:
+                type: integer
+                example: 1
     responses:
       201:
         description: Aluno criado com sucesso
@@ -83,13 +85,18 @@ def criar_aluno():
     """
     data = request.get_json()
 
-    if not data or not all(k in data for k in ("nome", "idade", "turma")):
+    if not data or not all(k in data for k in ("nome", "data_nascimento", "turma_id")):
         return jsonify({"erro": "Dados incompletos"}), 400
+
+    try:
+        data_nasc = datetime.strptime(data["data_nascimento"], "%Y-%m-%d").date()
+    except Exception:
+        return jsonify({"erro": "Data de nascimento inválida"}), 400
 
     novo_aluno = Aluno(
         nome=data["nome"],
-        idade=data["idade"],
-        turma=data["turma"]
+        data_nascimento=data_nasc,
+        turma_id=data["turma_id"]
     )
     db.session.add(novo_aluno)
     db.session.commit()
@@ -117,10 +124,11 @@ def atualizar_aluno(id):
             properties:
               nome:
                 type: string
-              idade:
-                type: integer
-              turma:
+              data_nascimento:
                 type: string
+                format: date
+              turma_id:
+                type: integer
     responses:
       200:
         description: Aluno atualizado com sucesso
@@ -137,8 +145,13 @@ def atualizar_aluno(id):
 
     data = request.get_json()
     aluno.nome = data.get("nome", aluno.nome)
-    aluno.idade = data.get("idade", aluno.idade)
-    aluno.turma = data.get("turma", aluno.turma)
+    aluno.turma_id = data.get("turma_id", aluno.turma_id)
+
+    if "data_nascimento" in data:
+        try:
+            aluno.data_nascimento = datetime.strptime(data["data_nascimento"], "%Y-%m-%d").date()
+        except Exception:
+            return jsonify({"erro": "Data de nascimento inválida"}), 400
 
     db.session.commit()
     return jsonify({"mensagem": "Aluno atualizado com sucesso!"})

@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  db:
+    build: ./db
+    container_name: educonnect-db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: senha123
+      POSTGRES_DB: escola
+
+  backend:
+    build: ./backend
+    container_name: educonnect-backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://admin:senha123@db:5432/escola
+
+volumes:
+  db_data:
