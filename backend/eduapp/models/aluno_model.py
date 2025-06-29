@@ -1,4 +1,4 @@
-from APP.db.database import db
+from eduapp.db.database import db
 from datetime import date
 
 class Aluno(db.Model):

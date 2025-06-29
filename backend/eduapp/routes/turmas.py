@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
-from APP.models.turma_model import Turma
-from APP.db.database import db
+from eduapp.models.turma_model import Turma
+from eduapp.db.database import db
 
 turmas_routes = Blueprint("turmas_routes", __name__)
 
@@ -28,13 +28,16 @@ def listar_turmas():
                     type: string
                   ano:
                     type: string
+                  turno:
+                    type: string
     """
     turmas = Turma.query.all()
     return jsonify([
         {
             "id": t.id,
             "nome": t.nome,
-            "ano": t.ano
+            "ano": t.ano,
+            "turno": t.turno
         } for t in turmas
     ])
 
@@ -62,6 +65,9 @@ def criar_turma():
               ano:
                 type: string
                 example: 2025
+              turno:
+                type: string
+                example: Manhã
     responses:
       201:
         description: Turma criada com sucesso
@@ -110,6 +116,8 @@ def atualizar_turma(id):
                 type: string
               ano:
                 type: string
+              turno:
+                type: string
     responses:
       200:
         description: Turma atualizada com sucesso
@@ -129,7 +137,7 @@ def atualizar_turma(id):
         return jsonify({"erro": "Turma não encontrada"}), 404
 
     data = request.get_json()
-    for campo in ["nome", "ano"]:
+    for campo in ["nome", "ano", "turno"]:
         if campo in data:
             setattr(turma, campo, data[campo])
 

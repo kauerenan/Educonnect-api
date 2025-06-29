@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
-from APP.models.aluno_model import Aluno
-from APP.db.database import db
+from eduapp.models.aluno_model import Aluno
+from eduapp.db.database import db
 from datetime import datetime
 
 alunos_routes = Blueprint("alunos_routes", __name__)
