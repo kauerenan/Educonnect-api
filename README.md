@@ -1,6 +1,6 @@
 # 🎓 EduConnect API
 
-**EduConnect** é uma API RESTful para gestão escolar, desenvolvida para uma escola infantil, permitindo o controle de **alunos**, **turmas** e **professores**. O projeto é modularizado com Flask e SQLAlchemy, containerizado com Docker e documentado via Swagger (Flasgger).
+EduConnect é uma API RESTful para gestão escolar, desenvolvida para uma escola infantil, permitindo o controle de alunos, turmas e professores. O projeto é modularizado com Flask e SQLAlchemy, containerizado com Docker e documentado via Swagger (Flasgger).
 
 ℹ️ Documentação interativa disponível em: http://localhost:5000/apidocs
 
@@ -12,7 +12,7 @@
 - Flask + Blueprints
 - SQLAlchemy (ORM)
 - Flasgger (Swagger UI)
-- PostgreSQL (via Docker)
+- SQLite (armazenado em backend/instance/escolar.db)
 - Docker + Docker Compose
 
 ---
@@ -21,15 +21,15 @@
 
 EduConnect-api/
 ├── backend/
-│   ├── APP/
-│   │   ├── db/                # Conexão com o banco
-│   │   ├── models/            # Modelos ORM
-│   │   ├── routes/            # Rotas por entidade
+│   ├── app/                  # Módulo principal do app Flask
+│   │   ├── db/               # Conexão com o banco
+│   │   ├── models/           # Modelos ORM
+│   │   ├── routes/           # Rotas por entidade
 │   │   └── __init__.py
-│   ├── app.py                 # Ponto de entrada Flask
-│   ├── schema.sql             # Script de criação do banco
-│   └── requirements.txt
-├── db/                        # Volume do banco de dados
+│   ├── app.py                # Ponto de entrada Flask
+│   ├── ver_banco.py          # Script para consultar o banco
+│   ├── requirements.txt
+│   └── instance/             # Arquivos locais (como escolar.db)
 ├── docker-compose.yml
 └── start_backend.ps1
 
@@ -37,7 +37,7 @@ EduConnect-api/
 
 ## 🐳 Como Rodar com Docker
 
-### 1. Subir a aplicação
+1. Subir a aplicação:
 
 docker compose up --build
 
@@ -56,11 +56,20 @@ Se preferir, execute:
 & "backend/start_backend.ps1"
 
 Este script:
-
 - Derruba containers antigos
 - Reconstrói imagens
 - Aguarda backend subir
 - Abre o navegador com o Swagger
+
+---
+
+## 👁️ Visualizar os Dados do Banco
+
+Você pode rodar o script abaixo para exibir turmas, alunos e professores cadastrados:
+
+docker exec -it educonnect-backend python ver_banco.py
+
+O script está localizado em: backend/ver_banco.py
 
 ---
 
@@ -97,7 +106,19 @@ DELETE /alunos/4
 ## 📖 Documentação Swagger
 
 Após rodar a aplicação, acesse:
-👉 http://localhost:5000/apidocs
+http://localhost:5000/apidocs
+
+---
+
+## 🚫 Arquivos ignorados (via .gitignore)
+
+Certifique-se de incluir um .gitignore contendo:
+
+__pycache__/
+*.pyc
+*.db
+instance/
+.env
 
 ---
 
