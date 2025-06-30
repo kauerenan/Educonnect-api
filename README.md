@@ -49,27 +49,31 @@ Swagger: http://localhost:5000/apidocs
 
 ---
 
-## ✅ Atalho via PowerShell
+🛠️ Executar o Backend via PowerShell
+Caso deseje utilizar o atalho via PowerShell, siga os passos abaixo:
+- Ajuste o caminho do projeto no script
+- No arquivo start_backend.ps1, edite o valor da variável:
+$projeto = "C:\Users\Kaue Renan\Desktop\EduConnect-api"
+- ⚠️ Este caminho deve refletir onde o projeto está localizado na sua máquina. Altere conforme necessário!
+- Abra o terminal PowerShell e navegue até a pasta backend com:
+cd caminho\para\EduConnect-api\backend
+- Execute o script:
+.\start_backend.ps1
+- Esse comando irá:
+- Derrubar containers antigos (se houver)
+- Reconstruir as imagens Docker
+- Iniciar o backend
+- Abrir o navegador automaticamente com a interface Swagger
 
-Se preferir, execute:
-
-& "backend/start_backend.ps1"
-
-Este script:
-- Derruba containers antigos
-- Reconstrói imagens
-- Aguarda backend subir
-- Abre o navegador com o Swagger
 
 ---
 
 ## 👁️ Visualizar os Dados do Banco
 
-Você pode rodar o script abaixo para exibir turmas, alunos e professores cadastrados:
+Para vizualizar  o banco, é só  acessar o DBEAVER
+Adicionar o banco SQLITE em nova conexão e selecionar o escola.db
+diretorio: C:\Users\Administrador\Desktop\Educonnect-api-main\backend\instance\escola.db
 
-docker exec -it educonnect-backend python ver_banco.py
-
-O script está localizado em: backend/ver_banco.py
 
 ---
 
