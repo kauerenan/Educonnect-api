@@ -14,4 +14,4 @@ COPY wait-for-db.py .
 
 EXPOSE 5000
 
-CMD ["python", "wait-for-db.py"]
+CMD ["python", "app.py"]
